@@ -80,16 +80,16 @@ namespace Pertemuan1
                 item.load(shadervert,shaderfrag,Size_x,Size_y);
             }
         }
-        public void render(int _lines, double time, Matrix4 temp)
+        public void render(int _lines, double time, Matrix4 temp, Matrix4 camera_view, Matrix4 camera_projection)
         {
             _shader.Use();
             GL.BindVertexArray(_vertexArrayObject);
             //_model = _model * Matrix4.CreateRotationY((float)MathHelper.DegreesToRadians(time));
-            _model = temp;
+            //_model = temp;
             
             _shader.SetMatrix4("model", _model);
-            _shader.SetMatrix4("view", _view);
-            _shader.SetMatrix4("projection", _projection);
+            _shader.SetMatrix4("view", camera_view);
+            _shader.SetMatrix4("projection", camera_projection);
 
             
             if (_indices.Count != 0)
@@ -119,7 +119,7 @@ namespace Pertemuan1
             }
             foreach (var item in Child)
             {
-                item.render(_lines, time, temp);
+                item.render(_lines, time, temp,camera_view,camera_projection);
             }
         }
        public void createBoxVertices(float x,float y,float z,float length)
@@ -267,34 +267,35 @@ namespace Pertemuan1
                 }
             }
         }
-        //public void rotatede(Vector3 pivot, Vector3 vector, float angle)
-        //{
-        //    var radAngle = MathHelper.DegreesToRadians(angle);
+        public void rotatede(Vector3 pivot, Vector3 vector, float angle)
+        {
+            var radAngle = MathHelper.DegreesToRadians(angle);
 
-        //    var arbRotationMatrix = new Matrix4
-        //        (
-        //        new Vector4((float)(Math.Cos(radAngle) + Math.Pow(vector.X, 2.0f) * (1.0f - Math.Cos(radAngle))), (float)(vector.X * vector.Y * (1.0f - Math.Cos(radAngle)) + vector.Z * Math.Sin(radAngle)), (float)(vector.X * vector.Z * (1.0f - Math.Cos(radAngle)) - vector.Y * Math.Sin(radAngle)), 0),
-        //        new Vector4((float)(vector.X * vector.Y * (1.0f - Math.Cos(radAngle)) - vector.Z * Math.Sin(radAngle)), (float)(Math.Cos(radAngle) + Math.Pow(vector.Y, 2.0f) * (1.0f - Math.Cos(radAngle))), (float)(vector.Y * vector.Z * (1.0f - Math.Cos(radAngle)) + vector.X * Math.Sin(radAngle)), 0),
-        //        new Vector4((float)(vector.X * vector.Z * (1.0f - Math.Cos(radAngle)) + vector.Y * Math.Sin(radAngle)), (float)(vector.Y * vector.Z * (1.0f - Math.Cos(radAngle)) - vector.X * Math.Sin(radAngle)), (float)(Math.Cos(radAngle) + Math.Pow(vector.Z, 2.0f) * (1.0f - Math.Cos(radAngle))), 0),
-        //        Vector4.UnitW
-        //        );
+            var arbRotationMatrix = new Matrix4
+                (
+                new Vector4((float)(Math.Cos(radAngle) + Math.Pow(vector.X, 2.0f) * (1.0f - Math.Cos(radAngle))), (float)(vector.X * vector.Y * (1.0f - Math.Cos(radAngle)) + vector.Z * Math.Sin(radAngle)), (float)(vector.X * vector.Z * (1.0f - Math.Cos(radAngle)) - vector.Y * Math.Sin(radAngle)), 0),
+                new Vector4((float)(vector.X * vector.Y * (1.0f - Math.Cos(radAngle)) - vector.Z * Math.Sin(radAngle)), (float)(Math.Cos(radAngle) + Math.Pow(vector.Y, 2.0f) * (1.0f - Math.Cos(radAngle))), (float)(vector.Y * vector.Z * (1.0f - Math.Cos(radAngle)) + vector.X * Math.Sin(radAngle)), 0),
+                new Vector4((float)(vector.X * vector.Z * (1.0f - Math.Cos(radAngle)) + vector.Y * Math.Sin(radAngle)), (float)(vector.Y * vector.Z * (1.0f - Math.Cos(radAngle)) - vector.X * Math.Sin(radAngle)), (float)(Math.Cos(radAngle) + Math.Pow(vector.Z, 2.0f) * (1.0f - Math.Cos(radAngle))), 0),
+                Vector4.UnitW
+                );
 
-        //    _model *= Matrix4.CreateTranslation(-pivot);
-        //    _model *= arbRotationMatrix;
-        //    _model *= Matrix4.CreateTranslation(pivot);
+            _model *= Matrix4.CreateTranslation(-pivot);
+            _model *= arbRotationMatrix;
+            _model *= Matrix4.CreateTranslation(pivot);
 
-        //    for (int i = 0; i < 3; i++)
-        //    {
-        //        _euler[i] = Vector3.Normalize(getRotationResult(pivot, vector, radAngle, _euler[i], true));
-        //    }
+            for (int i = 0; i < 3; i++)
+            {
+                _euler[i] = Vector3.Normalize(getRotationResult(pivot, vector, radAngle, _euler[i], true));
+            }
 
-        //    _centerPosition = getRotationResult(pivot, vector, radAngle, _centerPosition);
+            _centerPosition = getRotationResult(pivot, vector, radAngle, _centerPosition);
 
-        //    //foreach (var i in child)
-        //    //{
-        //    //    i.rotate(pivot, vector, angle);
-        //    //}
-        //}
+
+            foreach (var i in Child)
+            {
+                i.rotate(pivot, vector, angle);
+            }
+        }
         public void rotate(Vector3 pivot, Vector3 vector, float angle)
         {
             //pivot -> mau rotate di titik mana

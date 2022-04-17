@@ -24,10 +24,31 @@ namespace Pertemuan1
         Camera _camera;
         bool _firstMove = true;
         Vector2 _lastPos;
+        Vector3 _objecPost = new Vector3(0.0f, 0.0f, 0.0f);
+        float _rotationSpeed = 1f;
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
+        public Matrix4 generateArbRotationMatrix(Vector3 axis, Vector3 center, float degree)
+        {
+            var rads = MathHelper.DegreesToRadians(degree);
 
+            var secretFormula = new float[4, 4] {
+                { (float)Math.Cos(rads) + (float)Math.Pow(axis.X, 2) * (1 - (float)Math.Cos(rads)), axis.X* axis.Y * (1 - (float)Math.Cos(rads)) - axis.Z * (float)Math.Sin(rads),    axis.X * axis.Z * (1 - (float)Math.Cos(rads)) + axis.Y * (float)Math.Sin(rads),   0 },
+                { axis.Y * axis.X * (1 - (float)Math.Cos(rads)) + axis.Z * (float)Math.Sin(rads),   (float)Math.Cos(rads) + (float)Math.Pow(axis.Y, 2) * (1 - (float)Math.Cos(rads)), axis.Y * axis.Z * (1 - (float)Math.Cos(rads)) - axis.X * (float)Math.Sin(rads),   0 },
+                { axis.Z * axis.X * (1 - (float)Math.Cos(rads)) - axis.Y * (float)Math.Sin(rads),   axis.Z * axis.Y * (1 - (float)Math.Cos(rads)) + axis.X * (float)Math.Sin(rads),   (float)Math.Cos(rads) + (float)Math.Pow(axis.Z, 2) * (1 - (float)Math.Cos(rads)), 0 },
+                { 0, 0, 0, 1}
+            };
+            var secretFormulaMatix = new Matrix4
+            (
+                new Vector4(secretFormula[0, 0], secretFormula[0, 1], secretFormula[0, 2], secretFormula[0, 3]),
+                new Vector4(secretFormula[1, 0], secretFormula[1, 1], secretFormula[1, 2], secretFormula[1, 3]),
+                new Vector4(secretFormula[2, 0], secretFormula[2, 1], secretFormula[2, 2], secretFormula[2, 3]),
+                new Vector4(secretFormula[3, 0], secretFormula[3, 1], secretFormula[3, 2], secretFormula[3, 3])
+            );
+
+            return secretFormulaMatix;
+        }
         protected override void OnLoad()
         {
             base.OnLoad();
@@ -118,6 +139,49 @@ namespace Pertemuan1
                 _lastPos = new Vector2(mouse.X, mouse.Y);
                 _camera.Yaw += deltaX * sensitivity;
                 _camera.Pitch -= deltaY * sensitivity;
+            }
+
+            if (KeyboardState.IsKeyDown(Keys.N))
+            {
+                var axis = new Vector3(0, 1, 0);
+                _camera.Position -= _objecPost;
+                _camera.Yaw += _rotationSpeed;
+                _camera.Position = Vector3.Transform(_camera.Position,
+                    generateArbRotationMatrix(axis, _objecPost, _rotationSpeed).ExtractRotation());
+                _camera.Position += _objecPost;
+
+                _camera._front = -Vector3.Normalize(_camera.Position - _objecPost);
+            }
+            if (KeyboardState.IsKeyDown(Keys.Comma))
+            {
+                var axis = new Vector3(0, 1, 0);
+                _camera.Position -= _objecPost;
+                _camera.Yaw -= _rotationSpeed;
+                _camera.Position = Vector3.Transform(_camera.Position,
+                    generateArbRotationMatrix(axis, _objecPost, -_rotationSpeed).ExtractRotation());
+                _camera.Position += _objecPost;
+
+                _camera._front = -Vector3.Normalize(_camera.Position - _objecPost);
+            }
+            if (KeyboardState.IsKeyDown(Keys.K))
+            {
+                var axis = new Vector3(1, 0, 0);
+                _camera.Position -= _objecPost;
+                _camera.Pitch -= _rotationSpeed;
+                _camera.Position = Vector3.Transform(_camera.Position,
+                    generateArbRotationMatrix(axis, _objecPost, _rotationSpeed).ExtractRotation());
+                _camera.Position += _objecPost;
+                _camera._front = -Vector3.Normalize(_camera.Position - _objecPost);
+            }
+            if (KeyboardState.IsKeyDown(Keys.M))
+            {
+                var axis = new Vector3(1, 0, 0);
+                _camera.Position -= _objecPost;
+                _camera.Pitch += _rotationSpeed;
+                _camera.Position = Vector3.Transform(_camera.Position,
+                    generateArbRotationMatrix(axis, _objecPost, -_rotationSpeed).ExtractRotation());
+                _camera.Position += _objecPost;
+                _camera._front = -Vector3.Normalize(_camera.Position - _objecPost);
             }
         }
 

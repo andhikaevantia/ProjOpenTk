@@ -26,6 +26,9 @@ namespace Pertemuan1
         Vector2 _lastPos;
         Vector3 _objecPost = new Vector3(0.0f, 0.0f, 0.0f);
         float _rotationSpeed = 1f;
+
+        Asset3d LightObject = new Asset3d();
+
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
@@ -54,15 +57,23 @@ namespace Pertemuan1
             base.OnLoad();
             //ganti background
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            GL.Enable(EnableCap.DepthTest);
+
+            LightObject.createBoxVertices(1.2f, 1.0f, 2.0f, 0.5f);
+            LightObject.load(Constants.path + "shader.vert", Constants.path + "shader.frag", Size.X, Size.Y);
+            _camera = new Camera(new Vector3(0, 0, 1), Size.X / Size.Y);
             _object3d[0] = new Asset3d();
-            _object3d[0].createBoxVertices(0.0f, 0.0f, 0, 0.5f);
+            _object3d[0].createBoxVertices2(0.0f, 0.0f, 0, 0.5f);
             //_object3d[0].createEllipsoid2(0.2f, 0.2f, 0.2f, 0.0f, 0.0f, 0.0f, 72, 24);
             //_object3d[0].createEllipsoid(0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f);
             _object3d[0].addChild(0.5f, 0.5f, 0.0f, 0.25f);
-            _object3d[0].load(Constants.path + "shader.vert", Constants.path + "shader.frag",Size.X,Size.Y);
-            _camera = new Camera(new Vector3(0, 0, 1), Size.X / Size.Y);
+            _object3d[0].load_withnormal(Constants.path + "shaderwithNormal.vert", Constants.path + "objectnew.frag",Size.X,Size.Y);
+            
+
 
             CursorGrabbed = true;
+
+            
 
         }
 
@@ -70,18 +81,22 @@ namespace Pertemuan1
         {
             base.OnRenderFrame(args);
             //
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             //_time += 9.0 * args.Time;
             Matrix4 temp = Matrix4.Identity;
             //temp = temp * Matrix4.CreateTranslation(0.5f, 0.5f, 0.0f);
             //degr += MathHelper.DegreesToRadians(20f);
             //temp = temp * Matrix4.CreateRotationX(degr);
-            _object3d[0].rotatede(_object3d[0]._centerPosition, _object3d[0]._euler[1], 0);
-            _object3d[0].Child[0].rotatede(_object3d[0].Child[0]._centerPosition, _object3d[0].Child[0]._euler[0], 1);
-            _object3d[0].render(3,_time,temp, _camera.GetViewMatrix(), _camera.GetProjectionMatrix());
+            //_object3d[0].rotatede(_object3d[0]._centerPosition, _object3d[0]._euler[1], 0);
+            //_object3d[0].Child[0].rotatede(_object3d[0].Child[0]._centerPosition, _object3d[0].Child[0]._euler[0], 1);
+
+            _object3d[0].render(0,_time,temp, _camera.GetViewMatrix(), _camera.GetProjectionMatrix());
+            _object3d[0].setFragVariable(new Vector3(1.0f, 0.5f, 0.31f), new Vector3(1.0f, 1.0f, 1.0f));
+            _object3d[0].setSpecularDiffuseVariable(LightObject._centerPosition, _camera.Position);
 
 
             _object3d[0].resetEuler();
+            LightObject.render(3, _time, temp, _camera.GetViewMatrix(), _camera.GetProjectionMatrix());
 
             SwapBuffers();
         }

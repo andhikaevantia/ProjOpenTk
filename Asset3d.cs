@@ -80,6 +80,7 @@ namespace Pertemuan1
                 item.load(shadervert,shaderfrag,Size_x,Size_y);
             }
         }
+
         public void render(int _lines, double time, Matrix4 temp, Matrix4 camera_view, Matrix4 camera_projection)
         {
             _shader.Use();
@@ -95,7 +96,6 @@ namespace Pertemuan1
             if (_indices.Count != 0)
             {
                 GL.DrawElements(PrimitiveType.Triangles, _indices.Count, DrawElementsType.UnsignedInt, 0);
-                Console.WriteLine("tes");
             }
             else
             {
@@ -197,7 +197,11 @@ namespace Pertemuan1
                 //SEGITIGA BAWAH 2
                 3,6,7
             };
+
+            
         }
+
+
         public void createEllipsoid(float radiusX,float radiusY, float radiusZ,float _x,float _y,float _z)
         {
             _centerPosition.X = _x;
@@ -382,8 +386,305 @@ namespace Pertemuan1
         public void addChild(float x, float y, float z, float length)
         {
             Asset3d newChild = new Asset3d();
-            newChild.createBoxVertices(x, y, z, length);
+            newChild.createBoxVertices2(x, y, z, length);
             Child.Add(newChild);
+        }
+
+        public void setFragVariable(Vector3 ObjectColor,Vector3 LightColor)
+        {
+            _shader.SetVector3("objectColor", ObjectColor);
+            _shader.SetVector3("lightColor", LightColor);
+            foreach (var item in Child)
+            {
+                item.setFragVariable(ObjectColor, LightColor);
+            }
+        }
+        public void setSpecularDiffuseVariable(Vector3 LightPos,Vector3 CameraPos)
+        {
+            //Console.Write(LightPos);
+            _shader.SetVector3("lightPos", LightPos);
+            _shader.SetVector3("viewPos", CameraPos);
+            foreach (var item in Child)
+            {
+                item.setSpecularDiffuseVariable(LightPos, CameraPos);
+            }
+        }
+        public void createBoxVertices2(float x, float y, float z, float length)
+        {
+            _centerPosition.X = x;
+            _centerPosition.Y = y;
+            _centerPosition.Z = z;
+            Vector3 temp_vector;
+
+            //FRONT FACE
+            
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, -1.0f));
+
+            
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, -1.0f));
+
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, -1.0f));
+
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, -1.0f));
+
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, -1.0f));
+
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, -1.0f));
+
+            //BACK FACE
+            //TITIK 5
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, 1.0f));
+
+            //TITIK 6
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, 1.0f));
+            //TITIK 7
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, 1.0f));
+
+            //TITIK 6
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, 1.0f));
+            //TITIK 7
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, 1.0f));
+
+            //TITIK 8
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 0.0f, 1.0f));
+
+            //LEFT FACE
+            //TITIK 1
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(-1.0f, 0.0f, 0.0f));
+            //TITIK 3
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(-1.0f, 0.0f, 0.0f));
+            //TITIK 5
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(-1.0f, 0.0f, 0.0f));
+            //TITIK 3
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(-1.0f, 0.0f, 0.0f));
+            //TITIK 5
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(-1.0f, 0.0f, 0.0f));
+            //TITIK 7
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(-1.0f, 0.0f, 0.0f));
+
+            //RIGHT FACE
+            //TITIK 2
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(1.0f, 0.0f, 0.0f));
+            //TITIK 4
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(1.0f, 0.0f, 0.0f));
+            //TITIK 6
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(1.0f, 0.0f, 0.0f));
+            //TITIK 4
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(1.0f, 0.0f, 0.0f));
+            //TITIK 6
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(1.0f, 0.0f, 0.0f));
+            //TITIK 8
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(1.0f, 0.0f, 0.0f));
+
+            //BOTTOM FACES
+            //TITIK 3
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, -1.0f, 0.0f));
+            //TITIK 4
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, -1.0f, 0.0f));
+            //TITIK 7
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, -1.0f, 0.0f));
+            //TITIK 4
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, -1.0f, 0.0f));
+            //TITIK 7
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, -1.0f, 0.0f));
+            //TITIK 8
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, -1.0f, 0.0f));
+
+            //TOP FACES
+            //TITIK 1
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 1.0f, 0.0f));
+            //TITIK 2
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 1.0f, 0.0f));
+            //TITIK 5
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 1.0f, 0.0f));
+            //TITIK 2
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z - length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 1.0f, 0.0f));
+            //TITIK 5
+            temp_vector.X = x - length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 1.0f, 0.0f));
+            //TITIK 6
+            temp_vector.X = x + length / 2.0f;
+            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Z = z + length / 2.0f;
+            _vertices.Add(temp_vector);
+            _vertices.Add(new Vector3(0.0f, 1.0f, 0.0f));
+        }
+
+        public void load_withnormal(string shadervert, string shaderfrag, float Size_x, float Size_y)
+        {
+            //Buffer
+            _vertexBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
+            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Count
+                * Vector3.SizeInBytes, _vertices.ToArray(), BufferUsageHint.StaticDraw);
+            //VAO
+            _vertexArrayObject = GL.GenVertexArray();
+            GL.BindVertexArray(_vertexArrayObject);
+            
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float,
+                false, 6 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(0);
+
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float,
+                false, 6 * sizeof(float), 3 * sizeof(float));
+            GL.EnableVertexAttribArray(1);
+
+            //if (_indices.Count != 0)
+            //{
+            //    _elementBufferObject = GL.GenBuffer();
+            //    GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
+            //    GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Count
+            //        * sizeof(uint), _indices.ToArray(), BufferUsageHint.StaticDraw);
+            //}
+            _shader = new Shader(shadervert, shaderfrag);
+            _shader.Use();
+            Console.WriteLine(shaderfrag);
+            _view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
+
+            _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), Size_x / (float)Size_y, 0.1f, 100.0f);
+            foreach (var item in Child)
+            {
+                item.load_withnormal(shadervert, shaderfrag, Size_x, Size_y);
+            }
         }
     }
 }
